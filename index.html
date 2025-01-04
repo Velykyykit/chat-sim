@@ -71,16 +71,33 @@
 
     <script>
         async function getResponse(userMessage) {
-            // Тестова функція для генерації випадкових ідей
-            const ideas = [
-                "Побудувати міст з мармеладу!",
-                "Запустити кав'ярню на місяці!",
-                "Розробити додаток для пошуку шкарпеток у пральній машині.",
-                "Організувати змагання равликів зі світлодіодами.",
-                "Створити окуляри для читання думок котів."
-            ];
-            const randomIndex = Math.floor(Math.random() * ideas.length);
-            return ideas[randomIndex];
+            const apiKey = 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; // Замініть YOUR_API_KEY на ваш реальний ключ OpenAI
+            const url = "https://api.openai.com/v1/completions";
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "text-davinci-003",
+                        prompt: `Користувач написав: "${userMessage}". Відповідай філософською жартівливою дурницею.",
+                        max_tokens: 100
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.choices[0].text.trim();
+            } catch (error) {
+                console.error("Error fetching response:", error);
+                return "На жаль, я не можу зараз відповісти. Спробуйте пізніше.";
+            }
         }
 
         function addMessage(content, sender) {
