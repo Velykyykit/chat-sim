@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatSIM - Чат дурних ідей</title>
+    <title>ChatSIM - Чат дурних відповідей</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,7 +61,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>ChatSIM - Чат дурних ідей</h1>
+        <h1>ChatSIM - Чат дурних відповідей</h1>
         <div class="chat" id="chat"></div>
         <div>
             <input type="text" id="userInput" placeholder="Напишіть щось...">
@@ -83,8 +83,9 @@
                     },
                     body: JSON.stringify({
                         model: "text-davinci-003",
-                        prompt: `Користувач написав: "${userMessage}". Відповідай філософською жартівливою дурницею.",
-                        max_tokens: 100
+                        prompt: `Користувач написав: "${userMessage}". Дай філософську, жартівливу відповідь на це.",
+                        max_tokens: 100,
+                        temperature: 0.7
                     })
                 });
 
