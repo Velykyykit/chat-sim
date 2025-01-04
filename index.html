@@ -3,57 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatSIM - Генератор дурних відповідей</title>
+    <title>ChatSIM - Генератор ідей</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 20px;
-            margin: 0;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .hidden {
-            display: none;
-        }
-        .chat {
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            padding: 10px;
-            height: 300px;
-            overflow-y: auto;
-            background: #f9f9f9;
-            margin-bottom: 10px;
-        }
-        .message {
-            margin: 5px 0;
-        }
-        .user {
-            text-align: right;
-            color: blue;
-        }
-        .sim {
-            text-align: left;
-            color: green;
-        }
-        input[type="text"], input[type="password"] {
-            width: calc(100% - 100px);
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            text-align: center;
+            margin-top: 20%;
         }
         button {
             padding: 10px 20px;
-            font-size: 16px;
-            color: white;
+            font-size: 18px;
             background-color: #007BFF;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -64,113 +25,14 @@
     </style>
 </head>
 <body>
-    <div class="container" id="loginContainer">
-        <h1>Вхід до ChatSIM</h1>
-        <p>Введіть свій API-ключ OpenAI:</p>
-        <input type="password" id="apiKeyInput" placeholder="Введіть API-ключ">
-        <button id="loginButton">Увійти</button>
-    </div>
-
-    <div class="container hidden" id="chatContainer">
-        <h1>ChatSIM - Генератор дурних відповідей</h1>
-        <div class="chat" id="chat"></div>
-        <div>
-            <input type="text" id="userInput" placeholder="Напишіть щось...">
-            <button id="sendButton">Відправити</button>
-        </div>
-    </div>
+    <h1>ChatSIM</h1>
+    <p>Натисніть кнопку нижче, щоб відкрити ChatGPT:</p>
+    <button onclick="openChatGPT()">Відкрити ChatGPT</button>
 
     <script>
-        // Перевіряємо, чи збережений ключ у localStorage
-        const savedApiKey = localStorage.getItem("openai_api_key");
-
-        if (savedApiKey) {
-            document.getElementById("loginContainer").classList.add("hidden");
-            document.getElementById("chatContainer").classList.remove("hidden");
+        function openChatGPT() {
+            window.open("https://chat.openai.com/", "_blank");
         }
-
-        document.getElementById("loginButton").addEventListener("click", () => {
-            const apiKey = document.getElementById("apiKeyInput").value.trim();
-
-            if (!apiKey) {
-                alert("API-ключ не може бути порожнім!");
-                return;
-            }
-
-            // Зберігаємо ключ у localStorage
-            localStorage.setItem("openai_api_key", apiKey);
-
-            // Показуємо чат і приховуємо форму входу
-            document.getElementById("loginContainer").classList.add("hidden");
-            document.getElementById("chatContainer").classList.remove("hidden");
-        });
-
-        async function getResponse(userMessage) {
-            const apiKey = localStorage.getItem("openai_api_key");
-
-            if (!apiKey) {
-                alert("API-ключ не знайдено! Увійдіть заново.");
-                location.reload();
-                return;
-            }
-
-            try {
-                const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-3.5-turbo",
-                        messages: [{ role: "user", content: userMessage }],
-                        max_tokens: 100,
-                        temperature: 0.7
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error: ${response.status}`);
-                }
-
-                const data = await response.json();
-                return data.choices[0].message.content.trim();
-            } catch (error) {
-                console.error("Error fetching response:", error);
-                return "На жаль, я не можу зараз відповісти. Спробуйте пізніше.";
-            }
-        }
-
-        function addMessage(content, sender) {
-            const chat = document.getElementById("chat");
-            const message = document.createElement("div");
-            message.className = `message ${sender}`;
-            message.innerText = content;
-            chat.appendChild(message);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        document.getElementById("sendButton").addEventListener("click", async () => {
-            const userInput = document.getElementById("userInput");
-            const userMessage = userInput.value.trim();
-
-            if (userMessage === "") {
-                alert("Поле не може бути порожнім!");
-                return;
-            }
-
-            addMessage(userMessage, "user");
-            userInput.value = "";
-
-            const response = await getResponse(userMessage);
-            addMessage(response, "sim");
-        });
-
-        document.getElementById("userInput").addEventListener("keypress", function (e) {
-            if (e.key === "Enter") {
-                document.getElementById("sendButton").click();
-            }
-        });
     </script>
 </body>
 </html>
