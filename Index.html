@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatSIM - Чат дурних ідей</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .chat {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin: 5px 0;
+        }
+        .user {
+            text-align: right;
+            color: blue;
+        }
+        .sim {
+            text-align: left;
+            color: green;
+        }
+        input[type="text"] {
+            width: calc(100% - 100px);
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ChatSIM - Чат дурних ідей</h1>
+        <div class="chat" id="chat"></div>
+        <div>
+            <input type="text" id="userInput" placeholder="Напишіть щось...">
+            <button id="sendButton">Відправити</button>
+        </div>
+    </div>
+
+    <script>
+        async function getResponse(userMessage) {
+            try {
+                const response = await fetch("https://api.openai.com/v1/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer YOUR_API_KEY"
+                    },
+                    body: JSON.stringify({
+                        model: "text-davinci-003",
+                        prompt: `Користувач написав: "${userMessage}". Відповідай жартівливою дурною ідеєю.",
+                        max_tokens: 50
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.choices[0].text.trim();
+            } catch (error) {
+                console.error("Error fetching response:", error);
+                return "Не вдалося отримати відповідь. Спробуйте пізніше.";
+            }
+        }
+
+        function addMessage(content, sender) {
+            const chat = document.getElementById('chat');
+            const message = document.createElement('div');
+            message.className = `message ${sender}`;
+            message.innerText = content;
+            chat.appendChild(message);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const userMessage = userInput.value.trim();
+
+            if (userMessage === '') {
+                alert("Поле не може бути порожнім!");
+                return;
+            }
+
+            addMessage(userMessage, 'user');
+            userInput.value = '';
+
+            const simResponse = await getResponse(userMessage);
+            addMessage(simResponse, 'sim');
+        }
+
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+
+        document.getElementById('userInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
