@@ -3,139 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatSIM - Чат дурних відповідей</title>
+    <title>ChatSIM - Інтеграція з ChatGPT</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 20px;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
         }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .chat {
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            padding: 10px;
-            height: 300px;
-            overflow-y: auto;
-            background: #f9f9f9;
-            margin-bottom: 10px;
-        }
-        .message {
-            margin: 5px 0;
-        }
-        .user {
-            text-align: right;
-            color: blue;
-        }
-        .sim {
-            text-align: left;
-            color: green;
-        }
-        input[type="text"] {
-            width: calc(100% - 100px);
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #007BFF;
+        iframe {
+            width: 100%;
+            height: 90vh;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
         }
-        button:hover {
-            background-color: #0056b3;
+        h1 {
+            margin: 10px 0;
+            font-size: 24px;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>ChatSIM - Чат дурних відповідей</h1>
-        <div class="chat" id="chat"></div>
-        <div>
-            <input type="text" id="userInput" placeholder="Напишіть щось...">
-            <button id="sendButton">Відправити</button>
-        </div>
-    </div>
-
-    <script>
-        async function getResponse(userMessage) {
-            const apiKey = "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"; // Замініть YOUR_API_KEY на ваш реальний ключ OpenAI
-            const url = "https://api.openai.com/v1/completions";
-
-            try {
-                console.log("Відправка запиту до OpenAI...");
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: "text-davinci-003",
-                        prompt: `Користувач написав: "${userMessage}". Дай філософську, жартівливу відповідь на це.`,
-                        max_tokens: 100,
-                        temperature: 0.7
-                    })
-                });
-
-                if (!response.ok) {
-                    console.error(`HTTP помилка: ${response.status}`);
-                    throw new Error(`HTTP помилка: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log("Отримано відповідь від OpenAI:", data);
-                return data.choices[0].text.trim();
-            } catch (error) {
-                console.error("Помилка під час отримання відповіді:", error);
-                return "На жаль, я не можу зараз відповісти. Спробуйте пізніше.";
-            }
-        }
-
-        function addMessage(content, sender) {
-            const chat = document.getElementById('chat');
-            const message = document.createElement('div');
-            message.className = `message ${sender}`;
-            message.innerText = content;
-            chat.appendChild(message);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        async function sendMessage() {
-            const userInput = document.getElementById('userInput');
-            const userMessage = userInput.value.trim();
-
-            if (userMessage === '') {
-                alert("Поле не може бути порожнім!");
-                return;
-            }
-
-            addMessage(userMessage, 'user');
-            userInput.value = '';
-
-            const simResponse = await getResponse(userMessage);
-            addMessage(simResponse, 'sim');
-        }
-
-        document.getElementById('sendButton').addEventListener('click', sendMessage);
-
-        document.getElementById('userInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    </script>
+    <h1>ChatSIM - Генератор дурних ідей</h1>
+    <iframe src="https://chat.openai.com/" title="ChatGPT"></iframe>
 </body>
 </html>
